@@ -1,15 +1,16 @@
-name: Node Projekt
-
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        node-version: [19, 20, 21]
+        node-version: [18, 19, 20]
 
     steps:
       - name: Checkout code
@@ -20,16 +21,21 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 19
-
       - name: Install dependencies
-        run: npm install
-      
-      - name: Run linter
-        run: npx eslint .
+        run: npm ci
 
-      - name: Run tests
+      - name: Run Linter
+        run: npx eslint .
+        continue-on-error: false
+
+      - name: Build Project
+        run: npm run build
+
+      - name: Run Tests with Coverage
         run: npm test
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-node-${{ matrix.node-version }}
+          path: coverage/
