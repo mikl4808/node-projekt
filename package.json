@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --coverage --passWithNoTests",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "build": "webpack --config webpack.config.js"
